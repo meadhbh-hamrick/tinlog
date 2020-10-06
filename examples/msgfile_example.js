@@ -1,4 +1,4 @@
-var logger = require( '../sn-logger' );
+var logger = require( '../tinlog' );
 var logger_options = {
   facility: 'TEST',
   messages_path: 'pathtest.msg'

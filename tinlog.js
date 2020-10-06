@@ -1,9 +1,11 @@
-/* sn-logger.js
+/* tinlog.js
+**
+** Portions Copyright (c) 2020, Meadhbh S. Hamrick
 **
 ** Copyright (c) 2012, Smithee, Spelvin, Agnew & Plinge, Inc.
 ** All rights reserved.
 **
-** @license( https://github.com/smithee-us/sn-logger/raw/master/LICENSE )
+** @license( https://github.com/meadhbh-hamrick/tinlog/blob/main/LICENSE )
 **/
 
 ( function () {
@@ -68,10 +70,22 @@
     var that = this;
 
     this.facility = this.options.facility ? this.options.facility : "UNKNOWN";
-    this.emitter = this.options.emitter ? this.options.emitter : util.error;
     this.date = this.options.date ? this.options.date : _getDate;
-    this.bits = this.options.components ? this.options.components : C_DEFAULT;
-    this.level = this.options.level ? this.options.level : L_DEFAULT;
+    this.bits = this.options.components ? this.options.components :
+      ( process.env.TINLOG_COMPONENTS ? process.env.TINLOG_COMPONENTS : C_DEFAULT);
+    this.level = this.options.level ? this.options.level :
+      ( process.env.TINLOG_LEVEL ? process.env.TINLOG_LEVEL : L_DEFAULT);
+    if( "undefined" != typeof this.options.emitter ) {
+      this.emitter = this.options.emitter;
+    }
+    if( "undefined" != typeof this.options.emitters ) {
+      this.emitters = {};
+      [ "D", "I", "S", "W", "E", "F" ].forEach( ( e ) => {
+        if( "undefined" != typeof this.options.emitters[ e ] ) {
+          this.emitters[ e ] = this.options.emitters[ e ];
+        }
+      } );
+    }
 
     if( this.options.explicit_path ) {
       process_explicit_path( this.options.explicit_path );
@@ -151,38 +165,41 @@
     return rv;
   };
 
+  logger.prototype.log_string_as_severity = function( severity, message ) {
+    if( ( "object" == typeof this.emitters ) &&
+        ( "function" == typeof this.emitters[ severity ] ) ) {
+      ( this.emitters[ severity ] )( message );
+    } else if( "function" == typeof this.emitter ) {
+      this.emitter( message );
+    } else {
+      console.log( message );
+    }
+
+    if( 'F' === severity ) {
+      throw Error( message );
+    }
+  };
+                                                
   logger.prototype.log = function ( selector ) {
+    if( severity_string.indexOf( selector.severity ) < this.level ) {
+      return;
+    }
+
+    var message = '%';
+    if( this.bits & C_FACILITY ) { message += this.facility; }
+    if( this.bits & C_SEVERITY ) { message += '-' + selector.severity; }
+    if( this.bits & C_ABBREV ) { message += '-' + selector.abbrev; }
+    if( this.bits & C_DATETIME ) { message += '|' + this.date(); }
+    if( this.bits & C_MESSAGE ) { message += '; ' + selector.text; }
+    message += '.';
+
     var parameters = Array.prototype.slice.call( arguments, 1 );
-    switch ( typeof selector ) {
-    case 'string':
-      if( parameters && parameters.length > 0 ) {
-        parameters.unshift( selector );
-        return this.log( util.format.apply( this, parameters ) );
-      } else {
-        this.emitter( [selector] );
-        return selector;
-      }
-      break;
 
-    case 'object':
-      if( severity_string.indexOf( selector.severity ) < this.level ) {
-        return;
-      }
-
-      var message = '%';
-      if( this.bits & C_FACILITY ) { message += this.facility; }
-      if( this.bits & C_SEVERITY ) { message += '-' + selector.severity; }
-      if( this.bits & C_ABBREV ) { message += '-' + selector.abbrev; }
-      if( this.bits & C_DATETIME ) { message += '|' + this.date(); }
-      if( this.bits & C_MESSAGE ) { message += '; ' + selector.text; }
-      message += '.';
-
+    if( parameters.length > 0 ) {
       parameters.unshift( message );
-      var text = this.log.apply( this, parameters );
-      if( 'F' === selector.severity ) {
-        throw Error( text );
-      }
-      break;
+      this.log_string_as_severity( selector.severity, util.format.apply( this, parameters) );
+    } else {
+      this.log_string_as_severity( selector.severity, message );
     }
   };
 })();

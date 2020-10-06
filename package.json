@@ -1,72 +1,38 @@
 {
-  "_from": "sn-logger",
-  "_id": "sn-logger@0.2.6",
-  "_inBundle": false,
-  "_integrity": "sha1-8Avdjf4aCTJN+nLYzMwXwMggZHA=",
-  "_location": "/sn-logger",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "tag",
-    "registry": true,
-    "raw": "sn-logger",
-    "name": "sn-logger",
-    "escapedName": "sn-logger",
-    "rawSpec": "",
-    "saveSpec": null,
-    "fetchSpec": "latest"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/sn-logger/-/sn-logger-0.2.6.tgz",
-  "_shasum": "f00bdd8dfe1a09324dfa72d8cccc17c0c8206470",
-  "_spec": "sn-logger",
-  "_where": "/home/msh/Projects/tinlog",
-  "bugs": {
-    "url": "https://github.com/smithee-us/sn-logger/issues"
-  },
   "bundleDependencies": false,
   "deprecated": false,
-  "description": "Simple logger inspired by the VMS Message facility.",
+  "description": "Environment Variable Driven Logging for AWS Lambda (or any other environemnt)",
   "directories": [
     "test",
     "examples"
   ],
-  "homepage": "https://github.com/smithee-us/sn-logger#readme",
+  "homepage": "https://github.com/meadhbh-hamrick/tinlog/blob/main/README.md",
   "keywords": [
     "logging",
+    "AWS,
+    "Lambda",
     "VMS"
   ],
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/smithee-us/sn-logger/raw/master/LICENSE"
+      "url": "https://github.com/meadhbh-hamrick/tinlog/blob/main/LICENSE"
     }
   ],
-  "main": "./sn-logger.js",
+  "main": "./tinlog.js",
   "maintainers": [
     {
       "name": "Meadhbh Hamrick",
-      "email": "meadhbh@smithee.us",
-      "url": "http://smithee.us/"
-    },
-    {
-      "name": "Meadhbh Hamrick",
-      "email": "OhMeadhbh@gmail.com",
-      "url": "http://meadhbh.org/"
+      "email": "Oh.Meadhbh@gmail.com",
+      "url": "http://meadhbh.hamrick.rocks/"
     }
   ],
-  "name": "sn-logger",
+  "name": "tinlog",
   "repositories": [
     {
       "type": "git",
-      "url": "git+https://github.com/smithee-us/sn-logger.git"
+      "url": "git@github.com:meadhbh-hamrick/tinlog.git"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/smithee-us/sn-logger.git"
-  },
-  "version": "0.2.6"
+  "version": "0.3.0"
 }
